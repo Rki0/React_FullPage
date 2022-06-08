@@ -33,7 +33,7 @@ export default Home;
 const Onepage = styled.div`
   width: 100%;
   height: 100vh;
-  background: no-repeat url(/assets/Home.jpg);
+  background: no-repeat url(process.env.PUBLIC_URL + /assets/Home.jpg);
   background-size: cover;
   text-align: center;
   display: flex;

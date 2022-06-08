@@ -19,7 +19,6 @@ function App() {
     // 현재 스크롤 위치를 scrollY에 저장
     setScrollY(window.pageYOffset);
     // setScrollY(window.scrollY);
-    console.log(scrollY);
 
     // 스크롤 위치에 따라 scrollIndex 설정
     // scrollIndex를 6으로 설정하는 과정에서 계속 5까지밖에 인식을 못하는 상황이 발생
