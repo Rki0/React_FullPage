@@ -9,10 +9,20 @@ function Home() {
       </Title>
 
       <StackDiv>
-        <img src="/assets/HTML_logo.png" alt="html" />
+        <img
+          src={process.env.PUBLIC_URL + "/assets/HTML_logo.png"}
+          alt="html"
+        />
+        <img src={process.env.PUBLIC_URL + "/assets/CSS_logo.png"} alt="css" />
+        <img src={process.env.PUBLIC_URL + "/assets/JS_logo.png"} alt="js" />
+        <img
+          src={process.env.PUBLIC_URL + "/assets/REACT_logo.pngg"}
+          alt="react"
+        />
+        {/* <img src="/assets/HTML_logo.png" alt="html" />
         <img src="/assets/CSS_logo.png" alt="css" />
         <img src="/assets/JS_logo.png" alt="js" />
-        <img src="/assets/REACT_logo.png" alt="react" />
+        <img src="/assets/REACT_logo.png" alt="react" /> */}
       </StackDiv>
     </Onepage>
   );
