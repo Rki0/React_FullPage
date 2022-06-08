@@ -4,8 +4,8 @@ function LeftLogo({ img, comp, period, text }) {
   return (
     <Twopage className={comp}>
       <LogoDiv>
-        {/* <img src={process.env.PUBLIC_URL + img} alt="logo" /> */}
-        <img src={img} alt="logo" />
+        <img src={process.env.PUBLIC_URL + img} alt="logo" />
+        {/* <img src={img} alt="logo" /> */}
       </LogoDiv>
       <TextDiv>
         <TitleDiv>

@@ -11,8 +11,8 @@ function LeftLogo({ img, comp, period, text }) {
         <p>{text}</p>
       </TextDiv>
       <LogoDiv>
-        {/* <img src={process.env.PUBLIC_URL + img} alt="logo" /> */}
-        <img src={img} alt="logo" />
+        <img src={process.env.PUBLIC_URL + img} alt="logo" />
+        {/* <img src={img} alt="logo" /> */}
       </LogoDiv>
     </Threepage>
   );

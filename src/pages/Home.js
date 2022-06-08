@@ -16,7 +16,7 @@ function Home() {
         <img src={process.env.PUBLIC_URL + "/assets/CSS_logo.png"} alt="css" />
         <img src={process.env.PUBLIC_URL + "/assets/JS_logo.png"} alt="js" />
         <img
-          src={process.env.PUBLIC_URL + "/assets/REACT_logo.pngg"}
+          src={process.env.PUBLIC_URL + "/assets/REACT_logo.png"}
           alt="react"
         />
         {/* <img src="/assets/HTML_logo.png" alt="html" />
