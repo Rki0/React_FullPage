@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-function ScrollLocation({ scrollIndex, num, href, setScrollIndex }) {
+function ScrollLocation({ scrollIndex, num, href }) {
   return (
     <>
       <StyledA href={href} num={num} scrollIndex={scrollIndex} />

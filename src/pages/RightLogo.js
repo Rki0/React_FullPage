@@ -14,6 +14,9 @@ function LeftLogo({ img, comp, period, text }) {
         <img src={process.env.PUBLIC_URL + img} alt="logo" />
         {/* <img src={img} alt="logo" /> */}
       </LogoDiv>
+      {comp === "CAFE TAIN" ? (
+        <PS>*상기 로고는 다른 카페입니다. 개인 카페라서 로고가 없습니다.*</PS>
+      ) : null}
     </Threepage>
   );
 }
@@ -27,6 +30,7 @@ const Threepage = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-around;
+  position: relative;
 
   // comp를 className으로 설정해서 각각 다르게 배경 색상 설정
   // 띄어쓰기가 있으므로 앞부분만 사용해도 됨. 대신 중복은 반드시 피할 것!
@@ -49,10 +53,12 @@ const Threepage = styled.div`
 const TextDiv = styled.div`
   display: flex;
   flex-direction: column;
-
+  ////
+  width: 500px;
+  ////
   p {
     &:last-child {
-      font-size: 32px;
+      font-size: 24px;
     }
   }
 `;
@@ -74,4 +80,11 @@ const LogoDiv = styled.div`
     width: 500px;
     height: auto;
   }
+`;
+
+const PS = styled.p`
+  position: absolute;
+  font-size: 15px;
+  bottom: 10px;
+  right: 50px;
 `;

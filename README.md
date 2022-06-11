@@ -12,6 +12,285 @@
 
 <img width="157" alt="스크린샷 2022-06-07 오후 8 21 04" src="https://user-images.githubusercontent.com/86224851/172367466-a873e47b-81af-4d6a-a59a-a24360f3784b.png">
 
+# Ver.2
+
+약간의 업데이트가 있다.  
+[Ver.1](#ver1)에서 말했던대로 useRef를 사용해서 스크롤의 위치를 받아오는 것을 구현해봤다.  
+업데이트를 하던 중 새롭게 알게된 기능도 있으므로, 리뷰를 진행해 보겠다.
+
+## 🗂 src/App.js
+
+```js
+import React, { useEffect, useState, useRef } from "react";
+import styled, { createGlobalStyle } from "styled-components";
+import Home from "./pages/Home";
+import LeftLogo from "./pages/LeftLogo";
+import RightLogo from "./pages/RightLogo";
+import ScrollNav from "./components/ScrollNav";
+
+function App() {
+  // 페이지 위치에 따라 scrollIndex를 설정. nav에 현재 페이지를 표시하기 위해 사용.
+  const [scrollIndex, setScrollIndex] = useState(1);
+
+  // 현재 스크롤 위치를 저장하기 위해 사용.
+  const [scrollY, setScrollY] = useState(0);
+
+  // 페이지 하나의 높이를 변수에 저장 == 100vh
+  const pageHeight = window.innerHeight;
+
+  // 컴포넌트 dom에 접근하기 위한 ref
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    if (!scrollRef.current) return;
+
+    window.addEventListener("scroll", handleFollow);
+
+    return () => {
+      window.removeEventListener("scroll", handleFollow);
+    };
+  });
+
+  const handleFollow = () => {
+    // top에서부터 얼마나 떨어졌는지 얻기 위해 ref를 활용한 getBoundingClientRect()
+    // width, height 등등
+    const scroll = scrollRef.current.getBoundingClientRect();
+
+    // getBoundingClientRect()의 top, y값은 음수로 나오기 때문에 -1을 곱함
+    setScrollY(scroll.top * -1);
+
+    if (scrollY >= 0 && scrollY < pageHeight - 100) {
+      setScrollIndex(1);
+    } else if (scrollY >= pageHeight - 100 && scrollY < pageHeight * 2 - 100) {
+      setScrollIndex(2);
+    } else if (
+      scrollY >= pageHeight * 2 - 100 &&
+      scrollY < pageHeight * 3 - 100
+    ) {
+      setScrollIndex(3);
+    } else if (
+      scrollY >= pageHeight * 3 - 100 &&
+      scrollY < pageHeight * 4 - 100
+    ) {
+      setScrollIndex(4);
+    } else if (
+      scrollY >= pageHeight * 4 - 100 &&
+      scrollY < pageHeight * 5 - 100
+    ) {
+      setScrollIndex(5);
+    } else if (scrollY >= pageHeight * 5 - 100 && scrollY < pageHeight * 6) {
+      setScrollIndex(6);
+    }
+  };
+
+  return (
+    <TopDiv ref={scrollRef}>
+      <GlobalStyle />
+      <ScrollNav scrollIndex={scrollIndex} />
+
+      <StyledBox>
+        <div className="container">
+          <div id="page-1">
+            <Home />
+          </div>
+          <div id="page-2">
+            <LeftLogo
+              img="/assets/BERA.png"
+              comp="Beskin Robbins"
+              period="2016.12 ~ 2017.06"
+              text="느낀점을 써봅시다"
+            />
+          </div>
+          <div id="page-3">
+            <RightLogo
+              img="/assets/SEVEN.png"
+              comp="Seven Eleven"
+              period="2017.07 ~ 2017.09"
+              text="느낀점을 써봅시다"
+            />
+          </div>
+          <div id="page-4">
+            <LeftLogo
+              img="/assets/SPAO.svg"
+              comp="SPAO"
+              period="2019.09 ~ 2020.03"
+              text="느낀점을 써봅시다"
+            />
+          </div>
+          <div id="page-5">
+            <RightLogo
+              img="/assets/CAFE.png"
+              comp="CAFE TAIN"
+              period="2021.07 ~ 2022.05"
+              text="느낀점을 써봅시다"
+            />
+          </div>
+          <div id="page-6">
+            <LeftLogo
+              img="/assets/ACADEMY.png"
+              comp="Parallax Academy"
+              period="2022.05 ~ Now"
+              text="느낀점을 써봅시다"
+            />
+          </div>
+        </div>
+      </StyledBox>
+    </TopDiv>
+  );
+}
+
+export default App;
+
+// nav의 위치를 조절하기 위한 전체 div 설정
+const TopDiv = styled.div`
+  position: relative;
+`;
+
+// styled-components로 글로벌 스타일 설정하는 방법
+const GlobalStyle = createGlobalStyle`
+  html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    overflow: scroll;
+  }
+
+  // Chrome, Safari, Opera 브라우저에서 스크롤바 숨기기
+  html::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const StyledBox = styled.div`
+  .container {
+    font-size: 50px;
+    font-weight: bold;
+
+    // 부모 태그에 scroll-snap-type을 하기 보다는 html에 하는 것이 좋다는 stackoverflow의 답변!
+    // https://stackoverflow.com/questions/54784885/css-scroll-snap-isnt-working-on-divs-in-react-app
+    // html에 적용한 결과 vh 단위로도 가능했다! 이를 getBoundingClientRect()랑 같이 활용해서
+    // top 값 or y 값을 활용하자!
+    height: 100vh;
+  }
+
+  .container > div {
+    scroll-snap-align: start;
+  }
+`;
+```
+
+가장 크게 변한 것은 당연 useRef의 사용이다.  
+이전에는 window.pageYOffset을 사용해서 스크롤된 거리를 측정했지만, 이번에는 가장 겉에 있는 컴포넌트인 < TopDiv >에 ref를 설정해서 해당 컴포넌트의 변화를 측정했다.  
+바로 getBoundingClientRect()를 이용하는 것이다.  
+특히나 이 함수의 사용으로 인해, Ver.1에서 해결하지 못했던 스크롤 값 측정이 안되는 현상도 해결 할 수 있었다.  
+이 함수는 엘리먼트의 width, height, top, bottom, x, y 등등 좌표나 거리에 값들을 리턴해준다. 나는 위에서부터 스크롤된 거리를 얻고자 했으므로 top을 사용하는 것으로 결정했다.  
+여기서 top, y는 음수가 출력되기 때문에 -1을 곱해서 setState로 활용했다.  
+Ver.1에서 scrollY값이 애매하게 맞아 떨어져서 UX가 좋지않았다는 문제점이 있었다.  
+이는 각 범위마다 100px을 줄여서 조금 더 매끄럽게 ScrollNav가 변경되도록 만들어서 해결했다.  
+위 문제들을 근본적으로 해결해줬던 부분은 사실 styled-components에 있다.  
+stackoverflow를 한참 찾아본 결과, scroll-snap-type은 부모 요소가 아닌 html에 적용하는게 더 바람직하다는 답변을 찾을 수 있었다.  
+그래서 scroll-snap과 관련된 속성들을 전부 html에 옮겼고, 이 때부터 문제들이 차근차근 해결되기 시작했다.  
+이런 방식으로 해결된 이유는 scroll 이벤트는 html, body에서 발생하는 이벤트이기 때문이라고 한다.
+
+## 🗂 src/ScrollNav.js
+
+```js
+import styled from "styled-components";
+import ScrollLocation from "./ScrollLocatoin";
+
+function ScrollNav({ scrollIndex }) {
+  // fill() 메서드를 사용하고자 했지만, 그건 빈 배열을 하나의 값으로 채우기 때문에 from() 메서드로 전환.
+  // 6의 길이를 가지는, undefined로 구성된 배열 생성
+  // value에는 각 원소 값인 undefined가 들어가고, index에는 인덱스 번호가 들어감.
+  // index + 1의 값을 각 value에 저장
+  // [1,2,3,4,5,6] 생성
+  const length = Array.from({ length: 6 }, (value, index) => index + 1);
+
+  return (
+    <StyledNav>
+      {length.map((value, index) => {
+        return (
+          <ScrollLocation
+            scrollIndex={scrollIndex}
+            num={value}
+            href={`#page-${value}`}
+          />
+        );
+      })}
+    </StyledNav>
+  );
+}
+
+export default ScrollNav;
+
+const StyledNav = styled.nav`
+  // position: absolute;
+  position: fixed;
+  top: 50%;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 100;
+  height: 130px;
+`;
+```
+
+코드 상 큰 변화는 없다. 수정하고자 했던 부분이 src/App.js에서 styled-components로 해결됐기 때문이다.  
+클릭을 하면 해당 < ScrollLocation >가 색상이 변경되기를 원했는데, 왜 이걸 바랬냐면, a 태그 특성상 화면이 스크롤되면서 움직이는게 아니라, 한번에 그 요소로 전환되기 때문이었다.  
+그런데 앞선 scr/App.js에서 scroll-behavior: smooth;를 부여했더니 a 태그를 클릭해도 자연스럽게 스크롤 동작을 하며 움직여서, 굳이 이 기능을 추가할 필요가 없어졌다.  
+스크롤 되면서 자연스럽게 < ScrollLocation >이 변경되었기 때문이다.  
+Ver.1에서 말했던 것처럼 map() 메서드를 통해서 코드를 좀더 간략하게 만든 것 정도의 변화가 있다.  
+Array.from() 메서드를 활용해서 1~6을 원소로 가지는 배열을 생성하고, 그를 활용해 map()을 했다.
+
+## 🗂 src/RightLogo.js
+
+```js
+import styled from "styled-components";
+
+function LeftLogo({ img, comp, period, text }) {
+  return (
+    <Threepage className={comp}>
+      <TextDiv>
+        <TitleDiv>
+          <h1>{comp}</h1>
+          <p>{period}</p>
+        </TitleDiv>
+        <p>{text}</p>
+      </TextDiv>
+      <LogoDiv>
+        <img src={process.env.PUBLIC_URL + img} alt="logo" />
+      </LogoDiv>
+      {comp === "CAFE TAIN" ? (
+        <PS>*상기 로고는 다른 카페입니다. 개인 카페라서 로고가 없습니다.*</PS>
+      ) : null}
+    </Threepage>
+  );
+}
+
+export default LeftLogo;
+
+const PS = styled.p`
+  position: absolute;
+  font-size: 15px;
+  bottom: 10px;
+  right: 50px;
+`;
+```
+
+이 부분도 약간의 수정이 있었다.  
+개인 카페 아르바이트였으므로, 로고가 없었다...  
+그래서 부득이하게 스타벅스 로고를 사용했고, 혼선 방지용으로 다른 로고를 사용했다고 공지하고 싶었다.  
+카페 아르바이트에서만 표시하고 싶기 때문에 props로 받아온 것 중 comp attr를 통해, 카페 아르바이트인지 확인한 뒤 공지를 표시하는 삼항연산자를 사용했다.
+
+## 🤔 회고
+
+생각보다 긴 시간이 걸렸다. CSS로도 충분히 쉽게 구현할 수 있을 것이라 생각했는데, 생각보다 js부분에서 많이 막혀서 그런 것 같다.(React라고 해야하려나)  
+다 완성하고나서 보니까 다음에는 어렵지 않게 만들 수 있을 것 같다.  
+구현하는 방법이 어렵다기 보다는, scroll 이벤트를 어디서 listen해야 하는지 등 지엽적인 지식이 부족해서 체감 난이도가 높았던 것 같다.  
+React 프로젝트를 만들면서 항상 느끼지만, Github에 빌드 파일을 올리는 것까지 고려해서 img의 src같은 것들을 미리미리 알맞게 작성하는 것이 정신건강에 이롭다.
+
+# Ver.1
+
 ## 🗂 src/App.js
 
 ```js

@@ -58,10 +58,13 @@ const LogoDiv = styled.div`
 const TextDiv = styled.div`
   display: flex;
   flex-direction: column;
+  ////
+  width: 500px;
+  ////
 
   p {
     &:last-child {
-      font-size: 32px;
+      font-size: 24px;
     }
   }
 `;
